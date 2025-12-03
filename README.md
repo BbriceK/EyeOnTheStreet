@@ -1,3 +1,10 @@
 # EyeOnTheStreet
 
-This work provides a baseline multi-label classification model for identifying four traffic calming measures from Google Street View images in Toronto and Montreal. Traffic calming measures are physical road modifications designed to help reduce traffic collisions and the model focuses on curb extension, cycle track, median island, and speed hump. 
+This work provides a **baseline multi-label classification model** for detecting traffic calming measures from Google Street View images in Toronto and Montreal. 
+
+Traffic calming measures are physical modifications to roads that help reduce traffic collisions. This baseline focuses on four measures:
+
+- **Curb extensions**  
+- **Cycle tracks**  
+- **Median islands**  
+- **Speed humps**

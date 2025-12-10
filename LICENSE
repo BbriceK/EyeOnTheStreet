@@ -1,0 +1,18 @@
+EyeOnTheStreet Repository License – Research Use Only
+
+Copyright (c) 2025 Qian Zhang and contributors
+
+Permission is hereby granted for **non-commercial, research, and academic purposes only**, subject to the following conditions:
+
+1. This repository uses **frozen pretrained DINOv2 weights as a backbone** 
+   (https://github.com/facebookresearch/dinov2), which are distributed under the DINOv2 license. 
+   Users must comply with the DINOv2 license terms when using these weights.
+
+2. You may copy, modify, and distribute the code in this repository **for research purposes only**. Commercial use is strictly prohibited unless you obtain a separate license from the authors.
+
+3. Publications or public presentations that use this code **should cite**:
+   - This repository and the corresponding workshop paper: "Eye on the Street: Computer Vision for Spatial-Temporal Mapping of Street Safety Elements"
+
+4. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+By using this repository, you agree to comply with this license and the DINOv2 license terms.

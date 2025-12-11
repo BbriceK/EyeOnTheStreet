@@ -10,6 +10,8 @@ import json
 from PIL import Image
 import numpy as np
 import random
+from .full_model import FullModel
+from .loss import AsymmetricLoss
 from torch.utils.data import Dataset, DataLoader, DistributedSampler
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
@@ -35,110 +37,6 @@ def load_labels_from_json(json_file: str) -> dict:
     return labels_dict
 
 
-class AsymmetricLoss(nn.Module):
-    def __init__(self, gamma_neg=0.5, gamma_pos=0.3, clip=0.01, eps=1e-8, disable_torch_grad_focal_loss=True):
-        super(AsymmetricLoss, self).__init__()
-
-        self.gamma_neg = gamma_neg
-        self.gamma_pos = gamma_pos
-        self.clip = clip
-        self.disable_torch_grad_focal_loss = disable_torch_grad_focal_loss
-        self.eps = eps
-
-    def forward(self, x, y):
-        """"
-        Parameters
-        ----------
-        x: input logits
-        y: targets (multi-label binarized vector)
-        """
-
-        # Calculating Probabilities
-        x_sigmoid = torch.sigmoid(x)
-        xs_pos = x_sigmoid
-        xs_neg = 1 - x_sigmoid
-
-        # Asymmetric Clipping
-        if self.clip is not None and self.clip > 0:
-            xs_neg = (xs_neg + self.clip).clamp(max=1)
-
-        # Basic CE calculation
-        los_pos = y * torch.log(xs_pos.clamp(min=self.eps))
-        los_neg = (1 - y) * torch.log(xs_neg.clamp(min=self.eps))
-        loss = los_pos + los_neg
-
-        # Asymmetric Focusing
-        if self.gamma_neg > 0 or self.gamma_pos > 0:
-            if self.disable_torch_grad_focal_loss:
-                torch.set_grad_enabled(False)
-            pt0 = xs_pos * y
-            pt1 = xs_neg * (1 - y)
-            pt = pt0 + pt1
-            one_sided_gamma = self.gamma_pos * y + self.gamma_neg * (1 - y)
-            one_sided_w = torch.pow(1 - pt, one_sided_gamma)
-            if self.disable_torch_grad_focal_loss:
-                torch.set_grad_enabled(True)
-            loss *= one_sided_w
-
-        return -loss.sum()
-
-
-class PatchCNN(nn.Module):
-    def __init__(self, in_channels, out_dim):
-        super(PatchCNN, self).__init__()
-        # s
-        self.cnn = nn.Sequential(
-            nn.Conv2d(in_channels, 256, kernel_size=3, padding=1), 
-            nn.BatchNorm2d(256),
-            nn.ReLU(),
-
-            nn.Conv2d(256, out_dim, kernel_size=3, padding=1), 
-            nn.BatchNorm2d(out_dim),
-            nn.ReLU(),
-
-            nn.AdaptiveAvgPool2d(1),  
-        )
-
-    def forward(self, x):  
-        x = self.cnn(x)          
-        x = x.view(x.size(0), -1)            
-        return x
-
-
-class NeckDINov2(nn.Module):
-    def __init__(self, nc, dropout=0.7):
-        super().__init__()
-        self.conv = nn.Conv1d(in_channels=384, out_channels=384, kernel_size=4, stride=4)
-        self.patch_cnn = PatchCNN(in_channels=384, out_dim=128)
-        self.drop = nn.Dropout(p=dropout)
-
-    def forward(self, x):
-        reg_embeddings, cls_embeddings,patch_embeddings = x
-
-        cls_embeddings = cls_embeddings.squeeze(1)
-        reg_embeddings = reg_embeddings.squeeze(1)
-        patch_embeddings = patch_embeddings.squeeze(1)
-
-        feature = self.drop(self.conv(reg_embeddings.transpose(1, 2))).squeeze(-1)
-        B = patch_embeddings.size(0)
-
-        patch_reshaped = patch_embeddings.view(B, 16, 16, 384).permute(0, 3, 1, 2)
-        global_embedding = self.patch_cnn(patch_reshaped)
-        x0 = torch.cat((feature, cls_embeddings, global_embedding), dim=-1)
-        return x0
-
-
-class FullModel(nn.Module):
-    def __init__(self, output_dim):
-        super(FullModel, self).__init__()
-        self.feature_extractor = NeckDINov2(nc=8)
-        self.classifier = Classifier(input_dim=896, output_dim=output_dim)
-
-    def forward(self, x):
-        features = self.feature_extractor(x)
-        output = self.classifier(features)
-        return output
-
 class EmbeddingDataset(Dataset):
     def __init__(self, cls_embeddings, reg_embeddings, patch_embeddings, labels, image_names=None):
         self.cls_embeddings = list(cls_embeddings.values())
@@ -162,38 +60,6 @@ class EmbeddingDataset(Dataset):
         else:
             return (reg_embedding, cls_embedding, patch_embedding), label
 
-
-class Classifier(nn.Module):
-    def __init__(self, input_dim, output_dim):
-        super(Classifier, self).__init__()
-
-        self.fc1 = nn.Linear(input_dim, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, output_dim)
-
-        self.dropout1 = nn.Dropout(0.7)
-        self.dropout2 = nn.Dropout(0.7)
-
-        self.batch_norm1 = nn.BatchNorm1d(512)
-        self.batch_norm2 = nn.BatchNorm1d(256)
-
-        self.relu = nn.ReLU()
-
-
-    def forward(self, x):
-        if x.dim() == 3:
-            x = x.squeeze(1)
-
-        x = self.relu(self.fc1(x))
-        x = self.batch_norm1(x)
-        x = self.dropout1(x)
-
-        x = self.relu(self.fc2(x))
-        x = self.batch_norm2(x)
-        x = self.dropout2(x)
-
-        x = self.fc3(x)
-        return x
 
 
 def main(emb_path, save_path, out_path, data_path, rank, local_rank, world_size, dist_url):

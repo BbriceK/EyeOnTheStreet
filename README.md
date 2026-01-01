@@ -20,7 +20,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-This project relies on frozen DINOv2 weights as a backbone. Clone the DINOv2 repository in the same directory:
+This project relies on frozen DINOv2 weights as a backbone. Clone the DINOv2 repository in src/embeddings:
 ```bash
 git clone https://github.com/facebookresearch/dinov2.git
 ```

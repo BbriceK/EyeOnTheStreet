@@ -1,6 +1,8 @@
+import torch
 from torch.utils.data import Dataset
 from PIL import Image
-import torch
+import unicodedata
+
 
 class ImageDataset(Dataset):
     def __init__(self, image_paths, labels=None, transform=None):
@@ -13,6 +15,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         path = self.image_paths[idx]
+        path = unicodedata.normalize("NFC", path)
         img = Image.open(path).convert("RGB")
 
         if self.transform:

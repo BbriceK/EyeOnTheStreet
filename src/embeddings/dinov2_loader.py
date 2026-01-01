@@ -1,5 +1,5 @@
 import torch
-from src.embeddings.dinov2.dinov2.models.vision_transformer import vit_small
+from dinov2.models.vision_transformer import vit_small
 
 def load_dinov2(dino_path, device):
     model = vit_small(

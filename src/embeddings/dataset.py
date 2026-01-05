@@ -8,9 +8,6 @@ class ImageDataset(Dataset):
     """
     Custom PyTorch Dataset for loading images (and optional labels).
     
-    Only keeps labels for categories that have testing instances.
-    For this project, only labels 0,1,2,7 are used.
-
     Returns:
         img   : transformed image tensor
         label : corresponding label (or None if labels are not provided)

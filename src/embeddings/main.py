@@ -10,7 +10,6 @@ from .dataset import ImageDataset
 from .create_embeddings import compute_embeddings
 from .dinov2_loader import load_dinov2
 
-
 def main(args):
     seed_everything()
 
@@ -27,7 +26,9 @@ def main(args):
         transforms.Normalize([0.5]*3, [0.5]*3)
     ])
 
-    labels_dict = load_labels_from_json(args.json_pth)
+    # Map old 8-label indices to new 4-label indices
+    KEEP_LABELS = [0, 1, 2, 7]
+    labels_dict = load_labels_from_json(args.json_pth, keep_labels=KEEP_LABELS)
     # Dataset splits
     splits = ["train", "val", "test"]
     # Build image paths for each split
@@ -45,7 +46,6 @@ def main(args):
         dataset = ImageDataset(paths, labels, transform)
         dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
 
-        compute_embeddings(model, dataloader, device)
         cls, reg, patch = compute_embeddings(model, dataloader, device)
         save_embeddings(args.emb_pth, split, cls, reg, patch, labels)
 

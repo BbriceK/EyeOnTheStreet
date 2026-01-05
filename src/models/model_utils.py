@@ -5,6 +5,12 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
 def seed_everything(seed=1111):
+    """
+    Set seeds for reproducibility across random, NumPy, and PyTorch.
+
+    Args:
+        seed (int): The seed value to use for all random number generators.
+    """
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -13,6 +19,12 @@ def seed_everything(seed=1111):
 
 
 def load_embeddings(emb_path):
+    """
+    Load train/val/test embeddings and labels from .npy files.
+    
+    Returns:
+        dict: {"train": (cls, reg, patch, labels), "val": ..., "test": ...}
+    """
     def load_split(split):
         return (
             np.load(os.path.join(emb_path, f"{split}_cls_embeddings.npy"), allow_pickle=True).item(),
@@ -29,6 +41,13 @@ def load_embeddings(emb_path):
 
 
 class EmbeddingDataset(Dataset):
+    """
+    Store embeddings and labels as tensors.
+    Args:
+        cls_embeddings, reg_embeddings, patch_embeddings: dict of arrays {image_name: embedding}
+        labels: np.array of labels
+        image_names: optional list of image identifiers
+    """
     def __init__(self, cls_embeddings, reg_embeddings, patch_embeddings, labels, image_names=None):
         # Convert dict values to stacked torch tensors
         self.cls_embeddings = torch.from_numpy(
@@ -65,6 +84,14 @@ class EmbeddingDataset(Dataset):
 
 
 def build_loaders(data, batch_size):
+    """
+    Construct PyTorch DataLoaders.
+    Args:
+        data: dict returned by load_embeddings
+        batch_size: int
+    Returns:
+        train_loader, val_loader, test_loader
+    """
     train_ds = EmbeddingDataset(*data["train"])
     val_ds   = EmbeddingDataset(*data["val"])
     test_ds  = EmbeddingDataset(*data["test"])
@@ -77,6 +104,17 @@ def build_loaders(data, batch_size):
 
 
 def train_one_epoch(model, loader, optimizer, criterion, device):
+    """
+    Train the model for one epoch.
+    Args:
+        model: PyTorch model
+        loader: DataLoader
+        optimizer: optimizer
+        criterion: loss function
+        device: 'cpu' or 'cuda'
+    Returns:
+        avg_loss: float, average loss over this epoch
+    """
     model.train() 
     running_loss = 0.0
     num_batches = len(loader)
@@ -97,6 +135,18 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
 
 
 def evaluate(model, loader, criterion, device):
+    """
+    Evaluate the model; works for validation or test.
+    Args:
+        model: PyTorch model
+        loader: DataLoader
+        criterion: loss function
+        device: 'cpu' or 'cuda'
+    Returns:
+        avg_loss: average loss over the dataset
+        y_pred: predictions (numpy array)
+        y_true: true labels (numpy array)
+    """
     model.eval()
     running_loss = 0.0
     num_batches = len(loader)

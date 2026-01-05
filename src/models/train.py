@@ -1,29 +1,23 @@
-import argparse
-import os
-import torch
-import numpy as np
-import torch.optim as optim
-
-from .full_model import FullModel
-from .loss import AsymmetricLoss
-from .model_utils import seed_everything, load_embeddings, EmbeddingDataset, build_loaders, train_one_epoch, evaluate
-
-
 def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, weight_decay=1e-3, num_epochs=150, device=None):
+    # ---- Device setup ----
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Running on {device}")    
     seed_everything()
+
+    # ---- Load data ----
     data = load_embeddings(emb_path)
     train_loader, val_loader, test_loader = build_loaders(data, batch_size=num_batch)
 
 
+    # ---- Initialize model, optimizer, loss ----
     model = FullModel(num_classes).to(device)
     optimizer = optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
     criterion = AsymmetricLoss()
 
     best_val_loss = float('inf')
 
+    # ---- Training loop ----
     for epoch in range(num_epochs):
         # Train
         avg_train_loss = train_one_epoch(model, train_loader, optimizer, criterion, device)
@@ -39,6 +33,7 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
             torch.save(model.state_dict(), save_path)
             print(f"Best model saved → {save_path}")
 
+    # ---- Load best model and test ----
     print(f"Loading best model from {save_path}")
     model.load_state_dict(torch.load(save_path, map_location=device))
 

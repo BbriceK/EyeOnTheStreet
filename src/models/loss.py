@@ -2,6 +2,9 @@ import torch
 import torch.nn as nn
 
 class AsymmetricLoss(nn.Module):
+    """
+    Asymmetric Loss (ASL) for multi-label classification: https://arxiv.org/abs/2009.14119
+    """
     def __init__(self, gamma_neg=0.5, gamma_pos=0.3, clip=0.01, eps=1e-8, disable_torch_grad_focal_loss=True):
         super(AsymmetricLoss, self).__init__()
         self.gamma_neg = gamma_neg

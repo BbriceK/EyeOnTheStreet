@@ -181,8 +181,20 @@ def evaluate_predictions_and_save(
     out_path,
     thresholds=(0.5, 0.9),
 ):
-    os.makedirs(out_path, exist_ok=True)
+    """
+    Evaluate multi-label predictions at specified thresholds and save the results.
 
+    Args:
+        y_true (np.ndarray): Ground truth labels (num_samples x num_classes).
+        y_pred (np.ndarray): Predicted probabilities (num_samples x num_classes).
+        category_names (list): List of class/category names.
+        out_path (str): Directory where metrics will be saved.
+        thresholds (tuple): Thresholds for binarizing predictions (default: 0.5, 0.9).
+
+    Returns:
+        dict: Dictionary containing metrics for each threshold.
+    """
+    
     results = {}
 
     for t in thresholds:
@@ -193,9 +205,11 @@ def evaluate_predictions_and_save(
             category_names=category_names,
         )
 
+    # Save the metrics as a human-readable JSON file
     with open(os.path.join(out_path, "metrics.json"), "w") as f:
         json.dump(results, f, indent=2)
 
+    # Save the same metrics as a numpy .npy file for programmatic loading
     np.save(os.path.join(out_path, "metrics.npy"), results)
 
     return results

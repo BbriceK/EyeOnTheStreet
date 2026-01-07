@@ -1,9 +1,33 @@
 iimport numpy as np
 
 def binarize_predictions(y_pred, threshold):
+    """
+    Convert predicted probabilities into binary predictions based on a threshold.
+
+    Args:
+        y_pred (np.ndarray): Predicted probabilities (num_samples x num_classes).
+        threshold (float): Probability threshold for assigning 1 vs 0.
+
+    Returns:
+        np.ndarray: Binary predictions (0 or 1) of the same shape as y_pred.
+    """
+    # if >= threshold → 1, else → 0
     return (y_pred >= threshold).astype(int)
 
 def multilabel_metrics(y_true, y_pred_binary, category_names):
+    """
+    Calculate per-class and macro precision, recall, and F1 score for multi-label classification.
+
+    Args:
+        y_true (np.ndarray): Ground truth labels (num_samples x num_classes).
+        y_pred_binary (np.ndarray): Binary predictions (num_samples x num_classes).
+        category_names (list): List of class/category names.
+
+    Returns:
+        dict: Dictionary containing:
+            - 'per_class': metrics for each category (precision, recall, F1)
+            - 'macro': average metrics across all categories
+    """
     per_class = {}
 
     macro_precision = 0.0

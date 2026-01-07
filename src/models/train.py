@@ -56,6 +56,7 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
     np.save(os.path.join(out_path, "y_true_full.npy"), y_true_full)
     print(f"Saved y_pred_full.npy and y_true_full.npy in {out_path}")
 
+    # ---- Compute & save metrics ---- 
     evaluate_predictions_and_save(
         y_true=y_true_full,
         y_pred=y_pred_full,

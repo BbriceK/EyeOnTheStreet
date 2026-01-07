@@ -1,3 +1,13 @@
+import argparse
+import os
+import torch
+import numpy as np
+import torch.optim as optim
+
+from .full_model import FullModel
+from .loss import AsymmetricLoss
+from .model_utils import seed_everything, load_embeddings, EmbeddingDataset, build_loaders, train_one_epoch, evaluate, evaluate_predictions_and_save
+
 def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, weight_decay=1e-3, num_epochs=150, device=None):
     # ---- Device setup ----
     if device is None:
@@ -8,7 +18,7 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
     # ---- Load data ----
     data = load_embeddings(emb_path)
     train_loader, val_loader, test_loader = build_loaders(data, batch_size=num_batch)
-
+    CATEGORY_NAMES = ["Curb extensions", "Cycle Tracks", "Median island", "Speed Hump"]
 
     # ---- Initialize model, optimizer, loss ----
     model = FullModel(num_classes).to(device)
@@ -46,6 +56,14 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
     np.save(os.path.join(out_path, "y_true_full.npy"), y_true_full)
     print(f"Saved y_pred_full.npy and y_true_full.npy in {out_path}")
 
+    evaluate_predictions_and_save(
+        y_true=y_true_full,
+        y_pred=y_pred_full,
+        category_names=CATEGORY_NAMES,
+        out_path=out_path,
+        thresholds=(0.5, 0.9),
+    )
+    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train and evaluate FullModel")

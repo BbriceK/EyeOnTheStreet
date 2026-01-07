@@ -1,8 +1,10 @@
 import os
 import torch
 import random
+import json
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
+from .metrics import binarize_predictions, multilabel_metrics
 
 def seed_everything(seed=1111):
     """
@@ -170,3 +172,31 @@ def evaluate(model, loader, criterion, device):
     avg_loss = running_loss / num_batches
 
     return avg_loss, y_pred, y_true
+
+
+def evaluate_predictions_and_save(
+    y_true,
+    y_pred,
+    category_names,
+    out_path,
+    thresholds=(0.5, 0.9),
+):
+    os.makedirs(out_path, exist_ok=True)
+
+    results = {}
+
+    for t in thresholds:
+        y_bin = binarize_predictions(y_pred, t)
+        results[f"threshold_{t}"] = multilabel_metrics(
+            y_true=y_true,
+            y_pred_binary=y_bin,
+            category_names=category_names,
+        )
+
+    with open(os.path.join(out_path, "metrics.json"), "w") as f:
+        json.dump(results, f, indent=2)
+
+    np.save(os.path.join(out_path, "metrics.npy"), results)
+
+    return results
+

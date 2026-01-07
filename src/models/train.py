@@ -26,7 +26,8 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
     criterion = AsymmetricLoss()
 
     best_val_loss = float('inf')
-
+    os.makedirs(save_path, exist_ok=True)
+    
     # ---- Training loop ----
     for epoch in range(num_epochs):
         # Train
@@ -40,8 +41,9 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
         # Save best model
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
-            torch.save(model.state_dict(), save_path)
-            print(f"Best model saved → {save_path}")
+            model_file = os.path.join(save_path, "best.pth")
+            torch.save(model.state_dict(), model_file)
+            print(f"Best model saved → {model_file}")
 
     # ---- Load best model and test ----
     print(f"Loading best model from {save_path}")

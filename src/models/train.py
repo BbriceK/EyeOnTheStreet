@@ -46,8 +46,8 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
             print(f"Best model saved → {model_file}")
 
     # ---- Load best model and test ----
-    print(f"Loading best model from {save_path}")
-    model.load_state_dict(torch.load(save_path, map_location=device))
+    print(f"Loading best model from {model_file}")
+    model.load_state_dict(torch.load(model_file, map_location=device))
 
     avg_test_loss, y_pred_full, y_true_full = evaluate(model, test_loader, criterion, device)
     print(f"Test Loss: {avg_test_loss:.4f}")

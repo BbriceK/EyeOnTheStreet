@@ -1,4 +1,4 @@
-iimport numpy as np
+import numpy as np
 
 def binarize_predictions(y_pred, threshold):
     """

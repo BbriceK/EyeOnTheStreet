@@ -36,6 +36,13 @@ Install the remaining dependencies for this project:
 cd ../..
 pip install -r requirements.txt
 ```
+
+## Project Structure
+
+- `data/` – training, validation, and test images, and the label file.
+- `src/` – source code, including scripts for generating embeddings, training the classifier, and sample shell script.
+- `weights/` – the pretrained dinov2 weight.
+
 ## Usage
 
 ### Step 1: Generate image embeddings

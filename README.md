@@ -1,6 +1,6 @@
 # EyeOnTheStreet
 
-This work provides a **baseline multi-label classification model** for identifying traffic calming measures from Google Street View images in Toronto and Montreal, as presented in the UbiComp4VRU Workshop at UbiComp ’25. **The associated paper has now been published and is available for access **.
+This work provides a **baseline multi-label classification model** for identifying traffic calming measures from Google Street View images in Toronto and Montreal, as presented in the UbiComp4VRU Workshop at UbiComp ’25. **The associated paper has now been published and is available for access**.
 
 Traffic calming measures are physical modifications to roads that help reduce traffic collisions. This baseline focuses on four measures:
 

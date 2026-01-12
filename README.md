@@ -1,19 +1,19 @@
 # EyeOnTheStreet
 
-Prior work shows that many Canadian cities lack accurate and complete records of traffic calming measures (TCMs). TCMs are physical modifications to roads that help reduce traffic collisions, yet incomplete information limits the evaluation of their real-world road safety impacts and hinders equitable, data-driven urban planning. Manually identifying them across all locations and years at the city scale is impractical. 
+Prior work shows that many Canadian cities lack accurate and complete records of traffic calming measures (TCMs). TCMs are physical modifications to roads that help reduce traffic collisions, yet incomplete information limits the evaluation of real-world road safety impacts and hinders equitable urban planning. Manually identifying them across all locations and years at the city scale is impractical. 
 
-To address this, this work presents a **baseline multi-label classification model** that identifies four TCMs—**curb extensions, cycle tracks, median islands, and speed humps**—in default-angle Google Street View (GSV) images from Toronto and Montréal. Applying this to historical imagery **enables the construction of a geospatial database that tracks when and where TCMs were implemented**, supporting future safety analysis and policy evaluation. For details, see the associated paper; this work was presented in the UbiComp4VRU Workshop at UbiComp ’25.
+To address this, this work presents a **baseline multi-label classification model** that identifies four TCMs—**curb extensions, cycle tracks, median islands, and speed humps**—in default-angle Google Street View (GSV) images from Toronto and Montréal. Applying this to historical imagery **enables the construction of a geospatial database that tracks when and where TCMs were implemented**, supporting future safety analysis and policy evaluation.
 
-## Challenges
-Detecting these four TCMs in GSV images presents several non-trivial challenges, particularly because we use **default-angle GSV images**: the locations of TCMs are not known in advance, so capturing targeted camera angles or zoom levels for every site would be exhaustive and impractical.
+For details, check the associated paper; this work was presented in the UbiComp4VRU Workshop at UbiComp ’25.
+
+## Some Challenges
+Detecting these four TCMs in **default-angle GSV images** presents several non-trivial challenges:
 
 - High variability within the same category: TCMs are defined by function rather than appearance, so even within one category, visual forms can vary widely. For example, cycle tracks may be separated by bollards, concrete barriers, or raised pavement. Furthermore, variation is further increased across cities due to differences in local policies.
 
 - Temporal environment factors at longitudinal scale: Images of the same location can differ substantially over time due to changes in weather, lighting conditions, seasons, and infrastructure updates.
 
 - Occlusion and visual clutter: In default-angle GSV images, TCMs often appear small, partially occluded, or embedded within cluttered urban scenes.
-
-- Class imbalance: The uneven geographic distribution of TCMs leads to imbalanced label frequencies.
 
 ## Installation
 To set up the project, first create and activate a virtual environment:

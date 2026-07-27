@@ -4,7 +4,7 @@ import random
 import numpy as np
 import torch
 
-def seed_everything(seed=1111):
+def seed_everything(seed=203):
     """
     Set seeds for reproducibility across random, NumPy, and PyTorch.
 

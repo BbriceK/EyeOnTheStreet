@@ -5,10 +5,10 @@ import torch.distributed as dist
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from .embed_utils import seed_everything, load_labels_from_json, build_paths, save_embeddings
-from .dataset import ImageDataset
-from .create_embeddings import compute_embeddings
-from .dinov2_loader import load_dinov2
+from embed_utils import seed_everything, load_labels_from_json, build_paths, save_embeddings
+from dataset import ImageDataset
+from create_embeddings import compute_embeddings
+from dinov2_loader import load_dinov2
 
 def main(args):
     seed_everything()
@@ -46,7 +46,7 @@ def main(args):
         dataset = ImageDataset(paths, labels, transform)
         dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=2, pin_memory=True)
 
-        cls, reg, patch = compute_embeddings(model, dataloader, device)
+        cls, reg, patch = compute_embeddings(model, dataloader, device, mode="training")
         save_embeddings(args.emb_pth, split, cls, reg, patch, labels)
 
 

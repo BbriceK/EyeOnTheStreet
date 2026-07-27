@@ -4,9 +4,9 @@ import torch
 import numpy as np
 import torch.optim as optim
 
-from .full_model import FullModel
-from .loss import AsymmetricLoss
-from .model_utils import seed_everything, load_embeddings, EmbeddingDataset, build_loaders, train_one_epoch, evaluate, evaluate_predictions_and_save
+from models.full_model import FullModel
+from models.loss import AsymmetricLoss
+from models.model_utils import seed_everything, load_embeddings, EmbeddingDataset, build_loaders, train_one_epoch, evaluate, evaluate_predictions_and_save
 
 def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, weight_decay=1e-3, num_epochs=150, device=None):
     # ---- Device setup ----
@@ -66,7 +66,8 @@ def main(emb_path, save_path, out_path, num_batch=32, num_classes=4, lr=1e-4, we
         out_path=out_path,
         thresholds=(0.5, 0.9),
     )
-    
+
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Train and evaluate FullModel")
@@ -89,4 +90,4 @@ if __name__ == '__main__':
         lr=args.lr,
         weight_decay=args.weight_decay,
         num_epochs=args.num_epochs
-    )
+        )

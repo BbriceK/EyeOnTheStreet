@@ -4,9 +4,9 @@ import random
 import json
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-from .metrics import binarize_predictions, multilabel_metrics
+from models.metrics import binarize_predictions, multilabel_metrics
 
-def seed_everything(seed=1111):
+def seed_everything(seed=203):
     """
     Set seeds for reproducibility across random, NumPy, and PyTorch.
 
@@ -206,7 +206,7 @@ def evaluate_predictions_and_save(
         )
 
     # Save the metrics as a human-readable JSON file
-    with open(os.path.join(out_path, "metrics.json"), "w") as f:
+    with open(os.path.join(out_path, f"metrics.json"), "w") as f:
         json.dump(results, f, indent=2)
 
     # Save the same metrics as a numpy .npy file for programmatic loading

@@ -42,8 +42,11 @@ class ImageDataset(Dataset):
                     raise FileNotFoundError(f"Cannot find image: {original_path} (tried NFC & NFD)")
 
         img = Image.open(path).convert("RGB")
-        if self.transform:
+        if self.transform is not None:
             img = self.transform(img)
 
-        label = self.labels[idx] if self.labels is not None else None
-        return img, label, str(path)
+        if self.labels is not None:
+            label = self.labels[idx]
+            return img, label, str(path)
+        else:
+            return img, str(path)

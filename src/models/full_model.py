@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from .patch_cnn import NeckDINov2
+from models.patch_cnn import NeckDINov2
 
 class Classifier(nn.Module):
     """

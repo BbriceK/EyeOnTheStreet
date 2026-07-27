@@ -10,6 +10,15 @@ from embeddings.create_embeddings import compute_embeddings
 from embeddings.dinov2_loader import load_dinov2
 
 def get_image_files(folder):
+    """
+    Recursively get all image file paths from a directory.
+
+    Args:
+        folder (str): Path to the root directory.
+
+    Returns:
+        List[str]: List of absolute paths to image files.
+    """
     image_files = []
     for root, dirs, files in os.walk(folder):
         for fname in files:
@@ -49,6 +58,17 @@ class InferenceEmbeddings(Dataset):
 
 
 def create_infer_emb(data_pth, dino_pth, save_dir):
+    """
+    Generate and save inference embeddings using DINOv2.
+
+    Args:
+        data_pth (str): Directory containing input images.
+        dino_pth (str): Path to DINOv2 model checkpoint.
+        save_dir (str): Output directory for embeddings.
+
+    Returns:
+        tuple: (cls_embeddings, reg_embeddings, patch_embeddings, image_names)
+    """
     seed_everything()
 
     # ---- Enforce GPU-only execution ----

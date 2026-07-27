@@ -12,10 +12,12 @@ from inference_utils import create_infer_emb, InferenceEmbeddings
 def main(data_path, emb_path, dino_path, save_path, out_path):
     seed_everything()
 
+    # GPU setup
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is required but not available.")
     device = torch.device("cuda")
 
+    # Generate embeddings for all inference images
     inference_cls_embeddings, inference_reg_embeddings, inference_patch_embeddings, inference_image_names = create_infer_emb(data_path, dino_path, emb_path)
     inference_dataset = InferenceEmbeddings(inference_cls_embeddings, inference_reg_embeddings, inference_patch_embeddings, inference_image_names)
 
@@ -26,8 +28,9 @@ def main(data_path, emb_path, dino_path, save_path, out_path):
     model = FullModel(num_classes).to(device)
     model.load_state_dict(torch.load(save_path))
     print(f"Loading the best model from {save_path}")
-
     model.eval()
+
+    # Run inference
     y_pred = []
     infer_image_names = []
 
@@ -40,7 +43,7 @@ def main(data_path, emb_path, dino_path, save_path, out_path):
             outputs = model((reg_embeddings, cls_embeddings, patch_embeddings))
             probs = torch.sigmoid(outputs)
             y_pred.append(probs.cpu().detach().numpy())
-            infer_image_names.append(names)
+            infer_image_names.extend(names)
 
     y_pred_full = np.concatenate(y_pred, axis=0)
     os.makedirs(out_path, exist_ok=True)

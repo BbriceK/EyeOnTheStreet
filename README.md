@@ -6,7 +6,7 @@ To address this, this work presents a **baseline multi-label classification mode
 
 For details, check the associated paper; this work was presented in the UbiComp4VRU Workshop at UbiComp ’25.
 
-#### Modeling challenges in real-world scenarios
+### Modeling challenges in real-world scenarios
 Identifying these four TCMs in **default-angle GSV images** involves several non-trivial challenges:
 
 - High variability within the same category: TCMs are defined by function rather than appearance, so even within one category, visual forms can vary widely. For example, cycle tracks may be separated by bollards, concrete barriers, or raised pavement. Furthermore, variation is further increased across cities due to differences in local policies.
@@ -52,7 +52,6 @@ pip install -r requirements.txt
 
 ## Usage
 This repository supports two workflows:
-
 1. **Training pipeline** – generate image embeddings, train the classifier, and evaluate model performance.
 2. **Inference** – generate predictions on new images using the provided classifier checkpoint without retraining.
 

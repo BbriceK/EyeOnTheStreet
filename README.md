@@ -53,10 +53,13 @@ pip install -r requirements.txt
 ## Usage
 This repository supports two workflows:
 
-1. **Training pipeline** – generate image embeddings, train the classifier, and evaluate model performance.
-2. **Inference** – generate predictions on new images using the provided classifier checkpoint without retraining.
+1. **Training pipeline**
+Generate image embeddings, train the classifier, and evaluate model performance.
 
-### Training pipeline
+3. **Inference**
+Generate predictions on new images using the provided classifier checkpoint without retraining.
+
+### 1. Training pipeline
 #### Step 1: Generate image embeddings
 A sample script (`src/embeddings.sh`) is provided to compute image embeddings. Before running the script, configure all the paths according to the comments. 
 
@@ -75,7 +78,7 @@ bash src/model.sh
 ```
 All outputs — including the best model weight, prediction results, and evaluation metrics — are saved in the directory specified in the script, enabling further analysis.
 
-### Inference
+### 2. Inference
 The trained classifier checkpoint (`weights/best.pth`) and a sample script (`src/inference.sh`) are provided for users who want to generate predictions on new images without retraining the model. Before running inference, place the images in the desired input folder and configure the relevant paths in the shell script according to the comments.
 
 Run the script with:

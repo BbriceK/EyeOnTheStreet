@@ -53,11 +53,8 @@ pip install -r requirements.txt
 ## Usage
 This repository supports two workflows:
 
-1. **Training pipeline**
-Generate image embeddings, train the classifier, and evaluate model performance.
-
-3. **Inference**
-Generate predictions on new images using the provided classifier checkpoint without retraining.
+1. **Training pipeline** – generate image embeddings, train the classifier, and evaluate model performance.
+2. **Inference** - generate predictions on new images using the provided classifier checkpoint without retraining.
 
 ### 1. Training pipeline
 #### Step 1: Generate image embeddings
